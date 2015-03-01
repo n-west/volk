@@ -20,6 +20,47 @@
  * Boston, MA 02110-1301, USA.
  */
 
+/*!
+ * \page volk_32f_index_max_16u
+ *
+ * \b Overview
+ *
+ * Returns Argmax_i x[i]. Finds and returns the index which contains the maximum value in the given vector.
+ *
+ * <b>Dispatcher Prototype</b>
+ * \code
+ * void volk_32f_index_max_16u_a_sse4_1(unsigned int* target, const float* src0, unsigned int num_points)
+ * \endcode
+ *
+ * \b Inputs
+ * \li src0: The input vector of floats.
+ * \li num_points: The number of data points.
+ *
+ * \b Outputs
+ * \li target: The index of the maximum value in the input buffer.
+ *
+ * \b Example
+ * \code
+ *   int N = 10;
+ *   unsigned int alignment = volk_get_alignment();
+ *   float* in = (float*)volk_malloc(sizeof(float)*N, alignment);
+ *   uint32_t* out = (uint32_t*)volk_malloc(sizeof(uint32_t), alignment);
+ *
+ *   for(unsigned int ii = 0; ii < N; ++ii){
+ *       float x = (float)ii;
+ *       // a parabola with a maximum at x=4
+ *       in[ii] = -(x-4) * (x-4) + 5;
+ *   }
+ *
+ *   volk_32f_index_max_16u(out, in, N);
+ *
+ *   printf("maximum is %1.2f at index %u\n", in[*out], *out);
+ *
+ *   volk_free(in);
+ *   volk_free(out);
+ * \endcode
+ */
+
 #ifndef INCLUDED_volk_32f_index_max_16u_a_H
 #define INCLUDED_volk_32f_index_max_16u_a_H
 
@@ -31,7 +72,9 @@
 #ifdef LV_HAVE_SSE4_1
 #include<smmintrin.h>
 
-static inline void volk_32f_index_max_16u_a_sse4_1(unsigned int* target, const float* src0, unsigned int num_points) {
+static inline void
+volk_32f_index_max_16u_a_sse4_1(unsigned int* target, const float* src0, unsigned int num_points)
+{
   if(num_points > 0){
     unsigned int number = 0;
     const unsigned int quarterPoints = num_points / 4;
@@ -86,10 +129,14 @@ static inline void volk_32f_index_max_16u_a_sse4_1(unsigned int* target, const f
 
 #endif /*LV_HAVE_SSE4_1*/
 
+
 #ifdef LV_HAVE_SSE
+
 #include<xmmintrin.h>
 
-static inline void volk_32f_index_max_16u_a_sse(unsigned int* target, const float* src0, unsigned int num_points) {
+static inline void
+volk_32f_index_max_16u_a_sse(unsigned int* target, const float* src0, unsigned int num_points)
+{
   if(num_points > 0){
     unsigned int number = 0;
     const unsigned int quarterPoints = num_points / 4;
@@ -145,8 +192,12 @@ static inline void volk_32f_index_max_16u_a_sse(unsigned int* target, const floa
 
 #endif /*LV_HAVE_SSE*/
 
+
 #ifdef LV_HAVE_GENERIC
-static inline void volk_32f_index_max_16u_generic(unsigned int* target, const float* src0, unsigned int num_points) {
+
+static inline void
+volk_32f_index_max_16u_generic(unsigned int* target, const float* src0, unsigned int num_points)
+{
   if(num_points > 0){
     float max = src0[0];
     unsigned int index = 0;
@@ -154,12 +205,10 @@ static inline void volk_32f_index_max_16u_generic(unsigned int* target, const fl
     unsigned int i = 1;
 
     for(; i < num_points; ++i) {
-
       if(src0[i] > max){
-	index = i;
-	max = src0[i];
+        index = i;
+        max = src0[i];
       }
-
     }
     target[0] = index;
   }

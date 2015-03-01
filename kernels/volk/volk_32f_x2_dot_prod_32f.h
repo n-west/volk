@@ -20,6 +20,56 @@
  * Boston, MA 02110-1301, USA.
  */
 
+/*!
+ * \page volk_32f_x2_dot_prod_32f
+ *
+ * \b Overview
+ *
+ * This block computes the dot product (or inner product) between two
+ * vectors, the \p input and \p taps vectors. Given a set of \p
+ * num_points taps, the result is the sum of products between the two
+ * vectors. The result is a single value stored in the \p result
+ * address and is returned as a float.
+ *
+ * <b>Dispatcher Prototype</b>
+ * \code
+ * void volk_32f_x2_dot_prod_32f(float* result, const float* input, const float* taps, unsigned int num_points)
+ * \endcode
+ *
+ * \b Inputs
+ * \li input: vector of floats.
+ * \li taps:  float taps.
+ * \li num_points: number of samples in both \p input and \p taps.
+ *
+ * \b Outputs
+ * \li result: pointer to a float value to hold the dot product result.
+ *
+ * \b Example
+ * Take the dot product of an increasing vector and a vector of ones. The result is the sum of integers (0,9).
+ * \code
+ *   int N = 10;
+ *   unsigned int alignment = volk_get_alignment();
+ *   float* increasing = (float*)volk_malloc(sizeof(float)*N, alignment);
+ *   float* ones = (float*)volk_malloc(sizeof(float)*N, alignment);
+ *   float* out = (float*)volk_malloc(sizeof(float)*1, alignment);
+ *
+ *   for(unsigned int ii = 0; ii < N; ++ii){
+ *       increasing[ii] = (float)ii;
+ *       ones[ii] = 1.f;
+ *   }
+ *
+ *   volk_32f_x2_dot_prod_32f(out, increasing, ones, N);
+ *
+ *   printf("out = %1.2f\n", *out);
+ *
+ *   volk_free(increasing);
+ *   volk_free(ones);
+ *   volk_free(out);
+ *
+ *   return 0;
+ * \endcode
+ */
+
 #ifndef INCLUDED_volk_32f_x2_dot_prod_32f_u_H
 #define INCLUDED_volk_32f_x2_dot_prod_32f_u_H
 

@@ -20,6 +20,46 @@
  * Boston, MA 02110-1301, USA.
  */
 
+/*!
+ * \page volk_32f_accumulator_s32f
+ *
+ * \b Overview
+ *
+ * Accumulates the values in the input buffer.
+ *
+ * <b>Dispatcher Prototype</b>
+ * \code
+ * void volk_32f_accumulator_s32f(float* result, const float* inputBuffer, unsigned int num_points)
+ * \endcode
+ *
+ * \b Inputs
+ * \li inputBuffer The buffer of data to be accumulated
+ * \li num_points: The number of data points.
+ *
+ * \b Outputs
+ * \li result The accumulated result.
+ *
+ * \b Example
+ * Calculate the sum of numbers  0 through 99
+ * \code
+ *   int N = 100;
+ *   unsigned int alignment = volk_get_alignment();
+ *   float* increasing = (float*)volk_malloc(sizeof(float)*N, alignment);
+ *   float* out = (float*)volk_malloc(sizeof(float), alignment);
+ *
+ *   for(unsigned int ii = 0; ii < N; ++ii){
+ *       increasing[ii] = (float)ii;
+ *   }
+ *
+ *   volk_32f_accumulator_s32f(out, increasing, N);
+ *
+ *   printf("sum(1..100) = %1.2f\n", out[0]);
+ *
+ *   volk_free(increasing);
+ *   volk_free(out);
+ * \endcode
+ */
+
 #ifndef INCLUDED_volk_32f_accumulator_s32f_a_H
 #define INCLUDED_volk_32f_accumulator_s32f_a_H
 
@@ -28,14 +68,12 @@
 #include <stdio.h>
 
 #ifdef LV_HAVE_SSE
+
 #include <xmmintrin.h>
-/*!
-  \brief Accumulates the values in the input buffer
-  \param result The accumulated result
-  \param inputBuffer The buffer of data to be accumulated
-  \param num_points The number of values in inputBuffer to be accumulated
-*/
-static inline void volk_32f_accumulator_s32f_a_sse(float* result, const float* inputBuffer, unsigned int num_points){
+
+static inline void
+volk_32f_accumulator_s32f_a_sse(float* result, const float* inputBuffer, unsigned int num_points)
+{
   float returnValue = 0;
   unsigned int number = 0;
   const unsigned int quarterPoints = num_points / 4;
@@ -51,7 +89,9 @@ static inline void volk_32f_accumulator_s32f_a_sse(float* result, const float* i
     accumulator = _mm_add_ps(accumulator, aVal);
     aPtr += 4;
   }
+
   _mm_store_ps(tempBuffer,accumulator); // Store the results back into the C container
+
   returnValue = tempBuffer[0];
   returnValue += tempBuffer[1];
   returnValue += tempBuffer[2];
@@ -63,16 +103,16 @@ static inline void volk_32f_accumulator_s32f_a_sse(float* result, const float* i
   }
   *result = returnValue;
 }
+
 #endif /* LV_HAVE_SSE */
 
+
+
 #ifdef LV_HAVE_GENERIC
-/*!
-  \brief Accumulates the values in the input buffer
-  \param result The accumulated result
-  \param inputBuffer The buffer of data to be accumulated
-  \param num_points The number of values in inputBuffer to be accumulated
-*/
-static inline void volk_32f_accumulator_s32f_generic(float* result, const float* inputBuffer, unsigned int num_points){
+
+static inline void
+volk_32f_accumulator_s32f_generic(float* result, const float* inputBuffer, unsigned int num_points)
+{
   const float* aPtr = inputBuffer;
   unsigned int number = 0;
   float returnValue = 0;
@@ -82,9 +122,7 @@ static inline void volk_32f_accumulator_s32f_generic(float* result, const float*
   }
   *result = returnValue;
 }
+
 #endif /* LV_HAVE_GENERIC */
-
-
-
 
 #endif /* INCLUDED_volk_32f_accumulator_s32f_a_H */

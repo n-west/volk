@@ -20,6 +20,51 @@
  * Boston, MA 02110-1301, USA.
  */
 
+/*!
+ * \page volk_32f_tanh_32f
+ *
+ * \b Overview
+ *
+ * Computes the hyperbolic tangent of each element of the aVector:
+ *
+ * c[i] = tanh(a[i])
+ *
+ * <b>Dispatcher Prototype</b>
+ * \code
+ * void volk_32f_tanh_32f(float* cVector, const float* aVector, unsigned int num_points)
+ * \endcode
+ *
+ * \b Inputs
+ * \li aVector: The buffer of points.
+ * \li num_points: The number of values in input buffer.
+ *
+ * \b Outputs
+ * \li cVector: The output buffer.
+ *
+ * \b Example
+ * \code
+ *   int N = 10;
+ *   unsigned int alignment = volk_get_alignment();
+ *   float* in = (float*)volk_malloc(sizeof(float)*N, alignment);
+ *   float* out = (float*)volk_malloc(sizeof(float)*N, alignment);
+ *
+ *   for(unsigned int ii = 0; ii < N; ++ii){
+ *       // the approximate artanh(x) for x<1
+ *       float x = (float)ii / (float)N;
+ *       in[ii] = 0.5 * std::log((1.f+x)/(1.f-x));
+ *   }
+ *
+ *   volk_32f_tanh_32f(out, in, N);
+ *
+ *   for(unsigned int ii = 0; ii < N; ++ii){
+ *       printf("out(%i) = %f\n", ii, out[ii]);
+ *   }
+ *
+ *   volk_free(in);
+ *   volk_free(out);
+ * \endcode
+ */
+
 #ifndef INCLUDED_volk_32f_tanh_32f_a_H
 #define INCLUDED_volk_32f_tanh_32f_a_H
 
@@ -29,14 +74,10 @@
 #include <string.h>
 
 #ifdef LV_HAVE_GENERIC
-/*!
-\brief Calculates tanh(x)
-\param cVector The vector where the results will be stored
-\param aVector Input vector
-\param num_points The number of values to calulate
-*/
-static inline void volk_32f_tanh_32f_generic(float* cVector, const float* aVector,
-                                             unsigned int num_points)
+
+static inline void
+volk_32f_tanh_32f_generic(float* cVector, const float* aVector,
+                          unsigned int num_points)
 {
   unsigned int number = 0;
   float* cPtr = cVector;
@@ -50,14 +91,10 @@ static inline void volk_32f_tanh_32f_generic(float* cVector, const float* aVecto
 
 
 #ifdef LV_HAVE_GENERIC
-/*!
-\brief Calculates tanh(x) using a series approximation, good to within 1e-6 of the actual tanh.
-\param cVector The vector where the results will be stored
-\param aVector Input vector
-\param num_points The number of values to calulate
-*/
-static inline void volk_32f_tanh_32f_series(float* cVector, const float* aVector,
-                                            unsigned int num_points)
+
+static inline void
+volk_32f_tanh_32f_series(float* cVector, const float* aVector,
+                         unsigned int num_points)
 {
   unsigned int number = 0;
   float* cPtr = cVector;
@@ -83,14 +120,10 @@ static inline void volk_32f_tanh_32f_series(float* cVector, const float* aVector
 
 #ifdef LV_HAVE_SSE
 #include <xmmintrin.h>
-/*!
-\brief Calculates tanh(x) using a series approximation, good to within 1e-6 of the actual tanh.
-\param cVector The vector where the results will be stored
-\param aVector Input vector
-\param num_points The number of values to calulate
-*/
-static inline void volk_32f_tanh_32f_a_sse(float* cVector, const float* aVector,
-                                           unsigned int num_points)
+
+static inline void
+volk_32f_tanh_32f_a_sse(float* cVector, const float* aVector,
+                        unsigned int num_points)
 {
   unsigned int number = 0;
   const unsigned int quarterPoints = num_points / 4;
@@ -141,14 +174,10 @@ static inline void volk_32f_tanh_32f_a_sse(float* cVector, const float* aVector,
 
 #ifdef LV_HAVE_AVX
 #include <immintrin.h>
-/*!
-\brief Calculates tanh(x) using a series approximation, good to within 1e-6 of the actual tanh.
-\param cVector The vector where the results will be stored
-\param aVector Input vector
-\param num_points The number of values to calulate
-*/
-static inline void volk_32f_tanh_32f_a_avx(float* cVector, const float* aVector,
-                                           unsigned int num_points)
+
+static inline void
+volk_32f_tanh_32f_a_avx(float* cVector, const float* aVector,
+                        unsigned int num_points)
 {
   unsigned int number = 0;
   const unsigned int eighthPoints = num_points / 8;
@@ -201,14 +230,10 @@ static inline void volk_32f_tanh_32f_a_avx(float* cVector, const float* aVector,
 
 #ifdef LV_HAVE_SSE
 #include <xmmintrin.h>
-/*!
-\brief Calculates tanh(x) using a series approximation, good to within 1e-6 of the actual tanh.
-\param cVector The vector where the results will be stored
-\param aVector Input vector
-\param num_points The number of values to calulate
-*/
-static inline void volk_32f_tanh_32f_u_sse(float* cVector, const float* aVector,
-                                           unsigned int num_points)
+
+static inline void
+volk_32f_tanh_32f_u_sse(float* cVector, const float* aVector,
+                        unsigned int num_points)
 {
   unsigned int number = 0;
   const unsigned int quarterPoints = num_points / 4;
@@ -257,17 +282,12 @@ static inline void volk_32f_tanh_32f_u_sse(float* cVector, const float* aVector,
 #endif /* LV_HAVE_SSE */
 
 
-
 #ifdef LV_HAVE_AVX
 #include <immintrin.h>
-/*!
-\brief Calculates tanh(x) using a series approximation, good to within 1e-6 of the actual tanh.
-\param cVector The vector where the results will be stored
-\param aVector Input vector
-\param num_points The number of values to calulate
-*/
-static inline void volk_32f_tanh_32f_u_avx(float* cVector, const float* aVector,
-                                           unsigned int num_points)
+
+static inline void
+volk_32f_tanh_32f_u_avx(float* cVector, const float* aVector,
+                        unsigned int num_points)
 {
   unsigned int number = 0;
   const unsigned int eighthPoints = num_points / 8;

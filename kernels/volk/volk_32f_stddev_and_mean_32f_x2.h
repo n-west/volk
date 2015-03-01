@@ -20,6 +20,54 @@
  * Boston, MA 02110-1301, USA.
  */
 
+/*!
+ * \page volk_32f_stddev_and_mean_32f_x2
+ *
+ * \b Overview
+ *
+ * Computes the standard deviation and mean of the input buffer.
+ *
+ * <b>Dispatcher Prototype</b>
+ * \code
+ * void volk_32f_stddev_and_mean_32f_x2(float* stddev, float* mean, const float* inputBuffer, unsigned int num_points)
+ * \endcode
+ *
+ * \b Inputs
+ * \li inputBuffer: The buffer of points.
+ * \li num_points The number of values in input buffer.
+ *
+ * \b Outputs
+ * \li stddev: The calculated standard deviation.
+ * \li mean: The mean of the input buffer.
+ *
+ * \b Example
+ * Generate random numbers with c++11's normal distribution and estimate the mean and standard deviation
+ * \code
+ *   int N = 1000;
+ *   unsigned int alignment = volk_get_alignment();
+ *   float* rand_numbers = (float*)volk_malloc(sizeof(float)*N, alignment);
+ *   float* mean = (float*)volk_malloc(sizeof(float), alignment);
+ *   float* stddev = (float*)volk_malloc(sizeof(float), alignment);
+ *
+ *   // Use a normal generator with 0 mean, stddev 1
+ *   std::default_random_engine generator;
+ *   std::normal_distribution<float> distribution(0,1);
+ *
+ *   for(unsigned int ii = 0; ii < N; ++ii){
+ *       rand_numbers[ii] =  distribution(generator);
+ *   }
+ *
+ *   volk_32f_stddev_and_mean_32f_x2(stddev, mean, rand_numbers, N);
+ *
+ *   printf("std. dev. = %f\n", *stddev);
+ *   printf("mean = %f\n", *mean);
+ *
+ *   volk_free(rand_numbers);
+ *   volk_free(mean);
+ *   volk_free(stddev);
+ * \endcode
+ */
+
 #ifndef INCLUDED_volk_32f_stddev_and_mean_32f_x2_a_H
 #define INCLUDED_volk_32f_stddev_and_mean_32f_x2_a_H
 
@@ -30,14 +78,12 @@
 
 #ifdef LV_HAVE_SSE4_1
 #include <smmintrin.h>
-/*!
-  \brief Calculates the standard deviation and mean of the input buffer
-  \param stddev The calculated standard deviation
-  \param mean The mean of the input buffer
-  \param inputBuffer The buffer of points to calculate the std deviation for
-  \param num_points The number of values in input buffer to used in the stddev and mean calculations
-*/
-static inline void volk_32f_stddev_and_mean_32f_x2_a_sse4_1(float* stddev, float* mean, const float* inputBuffer, unsigned int num_points){
+
+static inline void
+volk_32f_stddev_and_mean_32f_x2_a_sse4_1(float* stddev, float* mean,
+                                         const float* inputBuffer,
+                                         unsigned int num_points)
+{
   float returnValue = 0;
   float newMean = 0;
   if(num_points > 0){
@@ -101,16 +147,15 @@ static inline void volk_32f_stddev_and_mean_32f_x2_a_sse4_1(float* stddev, float
 }
 #endif /* LV_HAVE_SSE4_1 */
 
+
 #ifdef LV_HAVE_SSE
 #include <xmmintrin.h>
-/*!
-  \brief Calculates the standard deviation and mean of the input buffer
-  \param stddev The calculated standard deviation
-  \param mean The mean of the input buffer
-  \param inputBuffer The buffer of points to calculate the std deviation for
-  \param num_points The number of values in input buffer to used in the stddev and mean calculations
-*/
-static inline void volk_32f_stddev_and_mean_32f_x2_a_sse(float* stddev, float* mean, const float* inputBuffer, unsigned int num_points){
+
+static inline void
+volk_32f_stddev_and_mean_32f_x2_a_sse(float* stddev, float* mean,
+                                      const float* inputBuffer,
+                                      unsigned int num_points)
+{
   float returnValue = 0;
   float newMean = 0;
   if(num_points > 0){
@@ -157,15 +202,14 @@ static inline void volk_32f_stddev_and_mean_32f_x2_a_sse(float* stddev, float* m
 }
 #endif /* LV_HAVE_SSE */
 
+
 #ifdef LV_HAVE_GENERIC
-/*!
-  \brief Calculates the standard deviation and mean of the input buffer
-  \param stddev The calculated standard deviation
-  \param mean The mean of the input buffer
-  \param inputBuffer The buffer of points to calculate the std deviation for
-  \param num_points The number of values in input buffer to used in the stddev and mean calculations
-*/
-static inline void volk_32f_stddev_and_mean_32f_x2_generic(float* stddev, float* mean, const float* inputBuffer, unsigned int num_points){
+
+static inline void
+volk_32f_stddev_and_mean_32f_x2_generic(float* stddev, float* mean,
+                                        const float* inputBuffer,
+                                        unsigned int num_points)
+{
   float returnValue = 0;
   float newMean = 0;
   if(num_points > 0){

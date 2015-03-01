@@ -20,6 +20,57 @@
  * Boston, MA 02110-1301, USA.
  */
 
+/*!
+ * \page volk_32fc_s32f_atan2_32f
+ *
+ * \b Overview
+ *
+ * Computes the arctan for each value in a complex vector and applies
+ * a normalization factor.
+ *
+ * <b>Dispatcher Prototype</b>
+ * \code
+ * void volk_32fc_s32f_atan2_32f(float* outputVector, const lv_32fc_t* complexVector, const float normalizeFactor, unsigned int num_points)
+ * \endcode
+ *
+ * \b Inputs
+ * \li inputVector: The byte-aligned input vector containing interleaved IQ data (I = cos, Q = sin).
+ * \li normalizeFactor: The atan results are divided by this normalization factor.
+ * \li num_points: The number of complex values in \p inputVector.
+ *
+ * \b Outputs
+ * \li outputVector: The vector where the results will be stored.
+ *
+ * \b Example
+ * Calculate the arctangent of points around the unit circle.
+ * \code
+ *   int N = 10;
+ *   unsigned int alignment = volk_get_alignment();
+ *   lv_32fc_t* in  = (lv_32fc_t*)volk_malloc(sizeof(lv_32fc_t)*N, alignment);
+ *   float* out = (float*)volk_malloc(sizeof(float)*N, alignment);
+ *   float scale = 1.f; // we want unit circle
+ *
+ *   for(unsigned int ii = 0; ii < N/2; ++ii){
+ *       // Generate points around the unit circle
+ *       float real = -4.f * ((float)ii / (float)N) + 1.f;
+ *       float imag = std::sqrt(1.f - real * real);
+ *       in[ii] = lv_cmake(real, imag);
+ *       in[ii+N/2] = lv_cmake(-real, -imag);
+ *   }
+ *
+ *   volk_32fc_s32f_atan2_32f(out, in, scale, N);
+ *
+ *   for(unsigned int ii = 0; ii < N; ++ii){
+ *       printf("atan2(%1.2f, %1.2f) = %1.2f\n",
+ *           lv_cimag(in[ii]), lv_creal(in[ii]), out[ii]);
+ *   }
+ *
+ *   volk_free(in);
+ *   volk_free(out);
+ * \endcode
+ */
+
+
 #ifndef INCLUDED_volk_32fc_s32f_atan2_32f_a_H
 #define INCLUDED_volk_32fc_s32f_atan2_32f_a_H
 
@@ -34,13 +85,6 @@
 #include <simdmath.h>
 #endif /* LV_HAVE_LIB_SIMDMATH */
 
-/*!
-  \brief performs the atan2 on the input vector and stores the results in the output vector.
-  \param outputVector The byte-aligned vector where the results will be stored.
-  \param inputVector The byte-aligned input vector containing interleaved IQ data (I = cos, Q = sin).
-  \param normalizeFactor The atan2 results will be divided by this normalization factor.
-  \param num_points The number of complex values in the input vector.
-*/
 static inline void volk_32fc_s32f_atan2_32f_a_sse4_1(float* outputVector,  const lv_32fc_t* complexVector, const float normalizeFactor, unsigned int num_points){
   const float* complexVectorPtr = (float*)complexVector;
   float* outPtr = outputVector;
@@ -96,13 +140,6 @@ static inline void volk_32fc_s32f_atan2_32f_a_sse4_1(float* outputVector,  const
 #include <simdmath.h>
 #endif /* LV_HAVE_LIB_SIMDMATH */
 
-/*!
-  \brief performs the atan2 on the input vector and stores the results in the output vector.
-  \param outputVector The byte-aligned vector where the results will be stored.
-  \param inputVector The byte-aligned input vector containing interleaved IQ data (I = cos, Q = sin).
-  \param normalizeFactor The atan2 results will be divided by this normalization factor.
-  \param num_points The number of complex values in the input vector.
-*/
 static inline void volk_32fc_s32f_atan2_32f_a_sse(float* outputVector,  const lv_32fc_t* complexVector, const float normalizeFactor, unsigned int num_points){
   const float* complexVectorPtr = (float*)complexVector;
   float* outPtr = outputVector;
@@ -154,13 +191,7 @@ static inline void volk_32fc_s32f_atan2_32f_a_sse(float* outputVector,  const lv
 #endif /* LV_HAVE_SSE */
 
 #ifdef LV_HAVE_GENERIC
-/*!
-  \brief performs the atan2 on the input vector and stores the results in the output vector.
-  \param outputVector The vector where the results will be stored.
-  \param inputVector Input vector containing interleaved IQ data (I = cos, Q = sin).
-  \param normalizeFactor The atan2 results will be divided by this normalization factor.
-  \param num_points The number of complex values in the input vector.
-*/
+
 static inline void volk_32fc_s32f_atan2_32f_generic(float* outputVector, const lv_32fc_t* inputVector, const float normalizeFactor, unsigned int num_points){
   float* outPtr = outputVector;
   const float* inPtr = (float*)inputVector;

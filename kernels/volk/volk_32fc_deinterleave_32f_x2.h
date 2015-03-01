@@ -20,6 +20,56 @@
  * Boston, MA 02110-1301, USA.
  */
 
+/*!
+ * \page volk_32fc_deinterleave_32f_x2
+ *
+ * \b Overview
+ *
+ * Deinterleaves the complex floating point vector into I & Q vector
+ * data.
+ *
+ * <b>Dispatcher Prototype</b>
+ * \code
+ * void volk_32fc_deinterleave_32f_x2(float* iBuffer, float* qBuffer, const lv_32fc_t* complexVector, unsigned int num_points)
+ * \endcode
+ *
+ * \b Inputs
+ * \li complexVector: The complex input vector.
+ * \li num_points: The number of complex data values to be deinterleaved.
+ *
+ * \b Outputs
+ * \li iBuffer: The I buffer output data.
+ * \li qBuffer: The Q buffer output data.
+ *
+ * \b Example
+ * Generate complex numbers around the top half of the unit circle and
+ * deinterleave in to real and imaginary buffers.
+ * \code
+ *   int N = 10;
+ *   unsigned int alignment = volk_get_alignment();
+ *   lv_32fc_t* in  = (lv_32fc_t*)volk_malloc(sizeof(lv_32fc_t)*N, alignment);
+ *   float* re = (float*)volk_malloc(sizeof(float)*N, alignment);
+ *   float* im = (float*)volk_malloc(sizeof(float)*N, alignment);
+ *
+ *   for(unsigned int ii = 0; ii < N; ++ii){
+ *       float real = 2.f * ((float)ii / (float)N) - 1.f;
+ *       float imag = std::sqrt(1.f - real * real);
+ *       in[ii] = lv_cmake(real, imag);
+ *   }
+ *
+ *   volk_32fc_deinterleave_32f_x2(re, im, in, N);
+ *
+ *   printf("          re  | im\n");
+ *   for(unsigned int ii = 0; ii < N; ++ii){
+ *       printf("out(%i) = %+.1f | %+.1f\n", ii, re[ii], im[ii]);
+ *   }
+ *
+ *   volk_free(in);
+ *   volk_free(re);
+ *   volk_free(im);
+ * \endcode
+ */
+
 #ifndef INCLUDED_volk_32fc_deinterleave_32f_x2_a_H
 #define INCLUDED_volk_32fc_deinterleave_32f_x2_a_H
 
@@ -28,14 +78,10 @@
 
 #ifdef LV_HAVE_AVX
 #include <immintrin.h>
-/*!
-  \brief Deinterleaves the complex vector into I & Q vector data
-  \param complexVector The complex input vector
-  \param iBuffer The I buffer output data
-  \param qBuffer The Q buffer output data
-  \param num_points The number of complex data values to be deinterleaved
-*/
-static inline void volk_32fc_deinterleave_32f_x2_a_avx(float* iBuffer, float* qBuffer, const lv_32fc_t* complexVector, unsigned int num_points){
+static inline void
+volk_32fc_deinterleave_32f_x2_a_avx(float* iBuffer, float* qBuffer, const lv_32fc_t* complexVector,
+                                    unsigned int num_points)
+{
   const float* complexVectorPtr = (float*)complexVector;
   float* iBufferPtr = iBuffer;
   float* qBufferPtr = qBuffer;
@@ -45,7 +91,6 @@ static inline void volk_32fc_deinterleave_32f_x2_a_avx(float* iBuffer, float* qB
   const unsigned int eighthPoints = num_points / 8;
   __m256 cplxValue1, cplxValue2, complex1, complex2, iValue, qValue;
   for(;number < eighthPoints; number++){
-
     cplxValue1 = _mm256_load_ps(complexVectorPtr);
     complexVectorPtr += 8;
 
@@ -77,14 +122,11 @@ static inline void volk_32fc_deinterleave_32f_x2_a_avx(float* iBuffer, float* qB
 
 #ifdef LV_HAVE_SSE
 #include <xmmintrin.h>
-/*!
-  \brief Deinterleaves the complex vector into I & Q vector data
-  \param complexVector The complex input vector
-  \param iBuffer The I buffer output data
-  \param qBuffer The Q buffer output data
-  \param num_points The number of complex data values to be deinterleaved
-*/
-static inline void volk_32fc_deinterleave_32f_x2_a_sse(float* iBuffer, float* qBuffer, const lv_32fc_t* complexVector, unsigned int num_points){
+
+static inline void
+volk_32fc_deinterleave_32f_x2_a_sse(float* iBuffer, float* qBuffer, const lv_32fc_t* complexVector,
+                                    unsigned int num_points)
+{
   const float* complexVectorPtr = (float*)complexVector;
   float* iBufferPtr = iBuffer;
   float* qBufferPtr = qBuffer;
@@ -93,7 +135,6 @@ static inline void volk_32fc_deinterleave_32f_x2_a_sse(float* iBuffer, float* qB
   const unsigned int quarterPoints = num_points / 4;
   __m128 cplxValue1, cplxValue2, iValue, qValue;
   for(;number < quarterPoints; number++){
-
     cplxValue1 = _mm_load_ps(complexVectorPtr);
     complexVectorPtr += 4;
 
@@ -120,16 +161,14 @@ static inline void volk_32fc_deinterleave_32f_x2_a_sse(float* iBuffer, float* qB
 }
 #endif /* LV_HAVE_SSE */
 
+
 #ifdef LV_HAVE_NEON
 #include <arm_neon.h>
-/*!
-  \brief Deinterleaves the complex vector into I & Q vector data
-  \param complexVector The complex input vector
-  \param iBuffer The I buffer output data
-  \param qBuffer The Q buffer output data
-  \param num_points The number of complex data values to be deinterleaved
 */
-static inline void volk_32fc_deinterleave_32f_x2_neon(float* iBuffer, float* qBuffer, const lv_32fc_t* complexVector, unsigned int num_points){
+static inline void
+volk_32fc_deinterleave_32f_x2_neon(float* iBuffer, float* qBuffer, const lv_32fc_t* complexVector,
+                                   unsigned int num_points)
+{
   unsigned int number = 0;
   unsigned int quarter_points = num_points / 4;
   const float* complexVectorPtr = (float*)complexVector;
@@ -153,15 +192,13 @@ static inline void volk_32fc_deinterleave_32f_x2_neon(float* iBuffer, float* qBu
 }
 #endif /* LV_HAVE_NEON */
 
+
 #ifdef LV_HAVE_GENERIC
-/*!
-  \brief Deinterleaves the complex vector into I & Q vector data
-  \param complexVector The complex input vector
-  \param iBuffer The I buffer output data
-  \param qBuffer The Q buffer output data
-  \param num_points The number of complex data values to be deinterleaved
-*/
-static inline void volk_32fc_deinterleave_32f_x2_generic(float* iBuffer, float* qBuffer, const lv_32fc_t* complexVector, unsigned int num_points){
+
+static inline void
+volk_32fc_deinterleave_32f_x2_generic(float* iBuffer, float* qBuffer, const lv_32fc_t* complexVector,
+                                      unsigned int num_points)
+{
   const float* complexVectorPtr = (float*)complexVector;
   float* iBufferPtr = iBuffer;
   float* qBufferPtr = qBuffer;
@@ -172,8 +209,5 @@ static inline void volk_32fc_deinterleave_32f_x2_generic(float* iBuffer, float* 
   }
 }
 #endif /* LV_HAVE_GENERIC */
-
-
-
 
 #endif /* INCLUDED_volk_32fc_deinterleave_32f_x2_a_H */

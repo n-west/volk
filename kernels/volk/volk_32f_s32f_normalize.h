@@ -20,6 +20,53 @@
  * Boston, MA 02110-1301, USA.
  */
 
+/*!
+ * \page volk_32f_s32f_normalize
+ *
+ * \b Overview
+ *
+ * Normalizes all points in the buffer by the scalar value (divides
+ * each data point by the scalar value).
+ *
+ * <b>Dispatcher Prototype</b>
+ * \code
+ * void volk_32f_s32f_normalize(float* vecBuffer, const float scalar, unsigned int num_points)
+ * \endcode
+ *
+ * \b Inputs
+ * \li vecBuffer: The buffer of values to be vectorized.
+ * \li scalar: The scale value to be applied to each buffer value.
+ * \li num_points: The number of data points.
+ *
+ * \b Outputs
+ * \li vecBuffer: returns as an in-place calculation.
+ *
+ * \b Example
+ * \code
+ *   int N = 10;
+ *   unsigned int alignment = volk_get_alignment();
+ *   float* increasing = (float*)volk_malloc(sizeof(float)*N, alignment);
+ *   float* out = (float*)volk_malloc(sizeof(float)*N, alignment);
+ *
+ *
+ *   for(unsigned int ii = 0; ii < N; ++ii){
+ *       increasing[ii] = 2.f * ((float)ii / (float)N) - 1.f;
+ *   }
+ *
+ *   // Normalize by the smallest delta (0.2 in this example)
+ *   float scale = 5.0f;
+ *
+ *   volk_32f_s32f_normalize(increasing, scale, N);
+ *
+ *   for(unsigned int ii = 0; ii < N; ++ii){
+ *       printf("increasing[%u] = %f\n", ii, increasing[ii]);
+ *   }
+ *
+ *   volk_free(increasing);
+ *   volk_free(out);
+ * \endcode
+ */
+
 #ifndef INCLUDED_volk_32f_s32f_normalize_a_H
 #define INCLUDED_volk_32f_s32f_normalize_a_H
 
@@ -28,12 +75,7 @@
 
 #ifdef LV_HAVE_SSE
 #include <xmmintrin.h>
-/*!
-  \brief Normalizes all points in the buffer by the scalar value ( divides each data point by the scalar value )
-  \param vecBuffer The buffer of values to be vectorized
-  \param num_points The number of values in vecBuffer
-  \param scalar The scale value to be applied to each buffer value
-*/
+
 static inline void volk_32f_s32f_normalize_a_sse(float* vecBuffer, const float scalar, unsigned int num_points){
   unsigned int number = 0;
   float* inputPtr = vecBuffer;
@@ -64,13 +106,7 @@ static inline void volk_32f_s32f_normalize_a_sse(float* vecBuffer, const float s
 #endif /* LV_HAVE_SSE */
 
 #ifdef LV_HAVE_GENERIC
-/*!
-  \brief Normalizes the two input vectors and store their results in the third vector
-  \param cVector The vector where the results will be stored
-  \param aVector One of the vectors to be normalizeed
-  \param bVector One of the vectors to be normalizeed
-  \param num_points The number of values in aVector and bVector to be normalizeed together and stored into cVector
-*/
+
 static inline void volk_32f_s32f_normalize_generic(float* vecBuffer, const float scalar, unsigned int num_points){
   unsigned int number = 0;
   float* inputPtr = vecBuffer;
@@ -83,13 +119,7 @@ static inline void volk_32f_s32f_normalize_generic(float* vecBuffer, const float
 #endif /* LV_HAVE_GENERIC */
 
 #ifdef LV_HAVE_ORC
-/*!
-  \brief Normalizes the two input vectors and store their results in the third vector
-  \param cVector The vector where the results will be stored
-  \param aVector One of the vectors to be normalizeed
-  \param bVector One of the vectors to be normalizeed
-  \param num_points The number of values in aVector and bVector to be normalizeed together and stored into cVector
-*/
+
 extern void volk_32f_s32f_normalize_a_orc_impl(float* dst, float* src, const float scalar, unsigned int num_points);
 static inline void volk_32f_s32f_normalize_u_orc(float* vecBuffer, const float scalar, unsigned int num_points){
     float invscalar = 1.0 / scalar;

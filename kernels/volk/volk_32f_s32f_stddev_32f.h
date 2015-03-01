@@ -20,6 +20,51 @@
  * Boston, MA 02110-1301, USA.
  */
 
+/*!
+ * \page volk_32f_s32f_stddev_32f
+ *
+ * \b Overview
+ *
+ * Computes the standard deviation of the input buffer using the supplied mean.
+ *
+ * <b>Dispatcher Prototype</b>
+ * \code
+ * void volk_32f_s32f_stddev_32f(float* stddev, const float* inputBuffer, const float mean, unsigned int num_points)
+ * \endcode
+ *
+ * \b Inputs
+ * \li inputBuffer: The input vector of floats.
+ * \li mean: The mean of the input buffer.
+ * \li num_points: The number of data points.
+ *
+ * \b Outputs
+ * \li stddev: The output vector.
+ *
+ * \b Example
+ * Calculate the standard deviation from numbers generated with c++11's normal generator
+ * \code
+ *   int N = 1000;
+ *   unsigned int alignment = volk_get_alignment();
+ *   float* increasing = (float*)volk_malloc(sizeof(float)*N, alignment);
+ *   float mean = 0.0f;
+ *   float* stddev = (float*)volk_malloc(sizeof(float), alignment);
+ *
+ *   // Use a normal generator with 0 mean, stddev = 1
+ *   std::default_random_engine generator;
+ *   std::normal_distribution<float> distribution(mean,1);
+ *
+ *   for(unsigned int ii = 0; ii < N; ++ii){
+ *       increasing[ii] =  distribution(generator);
+ *   }
+ *
+ *   volk_32f_s32f_power_32f(stddev, increasing, mean, N);
+ *
+ *   printf("std. dev. = %f\n", *stddev);
+ *
+ *   volk_free(increasing);
+ * \endcode
+ */
+
 #ifndef INCLUDED_volk_32f_s32f_stddev_32f_a_H
 #define INCLUDED_volk_32f_s32f_stddev_32f_a_H
 
@@ -30,14 +75,11 @@
 
 #ifdef LV_HAVE_SSE4_1
 #include <smmintrin.h>
-/*!
-  \brief Calculates the standard deviation of the input buffer using the supplied mean
-  \param stddev The calculated standard deviation
-  \param inputBuffer The buffer of points to calculate the std deviation for
-  \param mean The mean of the input buffer
-  \param num_points The number of values in input buffer to used in the stddev calculation
-*/
-static inline void volk_32f_s32f_stddev_32f_a_sse4_1(float* stddev, const float* inputBuffer, const float mean, unsigned int num_points){
+
+static inline void
+volk_32f_s32f_stddev_32f_a_sse4_1(float* stddev, const float* inputBuffer,
+                                  const float mean, unsigned int num_points)
+{
   float returnValue = 0;
   if(num_points > 0){
     unsigned int number = 0;
@@ -86,18 +128,17 @@ static inline void volk_32f_s32f_stddev_32f_a_sse4_1(float* stddev, const float*
   }
   *stddev = returnValue;
 }
+
 #endif /* LV_HAVE_SSE4_1 */
+
 
 #ifdef LV_HAVE_SSE
 #include <xmmintrin.h>
-/*!
-  \brief Calculates the standard deviation of the input buffer using the supplied mean
-  \param stddev The calculated standard deviation
-  \param inputBuffer The buffer of points to calculate the std deviation for
-  \param mean The mean of the input buffer
-  \param num_points The number of values in input buffer to used in the stddev calculation
-*/
-static inline void volk_32f_s32f_stddev_32f_a_sse(float* stddev, const float* inputBuffer, const float mean, unsigned int num_points){
+
+static inline void
+volk_32f_s32f_stddev_32f_a_sse(float* stddev, const float* inputBuffer,
+                               const float mean, unsigned int num_points)
+{
   float returnValue = 0;
   if(num_points > 0){
     unsigned int number = 0;
@@ -134,15 +175,13 @@ static inline void volk_32f_s32f_stddev_32f_a_sse(float* stddev, const float* in
 }
 #endif /* LV_HAVE_SSE */
 
+
 #ifdef LV_HAVE_GENERIC
-/*!
-  \brief Calculates the standard deviation of the input buffer using the supplied mean
-  \param stddev The calculated standard deviation
-  \param inputBuffer The buffer of points to calculate the std deviation for
-  \param mean The mean of the input buffer
-  \param num_points The number of values in input buffer to used in the stddev calculation
-*/
-static inline void volk_32f_s32f_stddev_32f_generic(float* stddev, const float* inputBuffer, const float mean, unsigned int num_points){
+
+static inline void
+volk_32f_s32f_stddev_32f_generic(float* stddev, const float* inputBuffer,
+                                 const float mean, unsigned int num_points)
+{
   float returnValue = 0;
   if(num_points > 0){
     const float* aPtr = inputBuffer;
@@ -159,9 +198,8 @@ static inline void volk_32f_s32f_stddev_32f_generic(float* stddev, const float* 
   }
   *stddev = returnValue;
 }
+
 #endif /* LV_HAVE_GENERIC */
-
-
 
 
 #endif /* INCLUDED_volk_32f_s32f_stddev_32f_a_H */
