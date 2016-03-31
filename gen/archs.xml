@@ -19,6 +19,11 @@
   <check name="has_neon"></check>
 </arch>
 
+<arch name="jazelle">
+  <alignment>16</alignment>
+  <check name="has_jazelle"></check>
+</arch>
+
 <arch name="32">
   <flag compiler="gnu">-m32</flag>
 </arch>

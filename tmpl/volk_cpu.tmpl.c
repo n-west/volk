@@ -151,6 +151,30 @@ static int has_neon(void){
 #endif
 }
 
+static int has_jazelle(void){
+#if defined(VOLK_CPU_ARM)
+    FILE *auxvec_f;
+    unsigned long auxvec[2];
+    unsigned int found_neon = 0;
+    auxvec_f = fopen("/proc/self/auxv", "rb");
+    if(!auxvec_f) return 0;
+
+    size_t r = 1;
+    //so auxv is basically 32b of ID and 32b of value
+    //so it goes like this
+    while(!found_neon && r) {
+      r = fread(auxvec, sizeof(unsigned long), 2, auxvec_f);
+      if((auxvec[0] == AT_HWCAP) && (auxvec[1] & HWCAP_JAVA))
+        found_jazelle = 1;
+    }
+
+    fclose(auxvec_f);
+    return found_jazelle;
+#else
+    return 0;
+#endif
+}
+
 #for $arch in $archs
 static int i_can_has_$arch.name (void) {
     #for $check, $params in $arch.checks
