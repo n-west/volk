@@ -5,7 +5,7 @@
 </machine>
 
 <machine name="neon">
-<archs>generic neon jazelle softfp|hardfp orc|</archs>
+<archs>generic neon jazelle| softfp|hardfp orc|</archs>
 </machine>
 
 <!-- trailing | bar means generate without either for MSVC -->
