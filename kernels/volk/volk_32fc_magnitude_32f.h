@@ -449,6 +449,29 @@ volk_32fc_magnitude_32f_neon_fancy_sweet(float* magnitudeVector, const lv_32fc_t
 }
 #endif /* LV_HAVE_NEON */
 
+#ifdef LV_HAVE_JAZELLE
+// At this point it definitely won't work AND I'm trying too hard
+// for the lulz
+#include <jni.h>
+// Pretend javah or whatever JNI magic creates this
+#include <JNIVolk_32fc_magnitude_32f.h>
+
+volk_32fc_magnitude_32f_jazelle_fancy_sweet_impl(float* magnitudeVector, const lv_32fc_t* complexVector, unsigned int num_points)
+    // For realz, this would be done on lib load once, because OMG
+    // this is inefficient
+    JavaVM* jvm;
+    JNIEnv* env;
+    JavaVMInitArgs args;
+    JavaVMOption options[1];
+    args.version = JNI_VERSION_1_6;
+    args.ignoreUnrecognized = JNI_FALSE;
+
+    JNI_CreateJavaVM(&jvm, (void **)&env, &args);
+
+    // Call in to Java and use Jazelle!
+    (*env)->volk_32fc_magnitude_32f_jazelle_fancy_sweet(magnitudeVector, complexVector, num_points);
+}
+#endif /* LV_HAVE_JAZELLE */
 
 #ifdef LV_HAVE_ORC
 
