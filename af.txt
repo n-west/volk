@@ -1,0 +1,2 @@
+
+This is just a joke and isn't even close to being functional. There would need to be some JNI magic run to generate the C/Java interface, and I'm not entirely sure what the point would be.
