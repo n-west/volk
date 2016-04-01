@@ -14,7 +14,6 @@ public static void volk_32fc_magnitude_32f_jazelle_fancy_sweet_32f(
         unsigned int num_points)
 {
   unsigned int number;
-  unsigned int quarter_points = num_points / 4;
 
   static float scale = 0.4142135;
   static float aHigh = 0.84;
@@ -32,7 +31,7 @@ public static void volk_32fc_magnitude_32f_jazelle_fancy_sweet_32f(
   float Min;
   float Max;
 
-  for (int number = 0; number < quarter_points; number+=2)
+  for (int number = 0; number < num_points*2; number+=2)
   {
     // Ahhhhh, fancy and sweet in its simplicity
     realAbs = Math.abs(complexVector[number]);
