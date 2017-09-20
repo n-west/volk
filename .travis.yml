@@ -1,0 +1,97 @@
+language: c
+
+dist: trusty
+sudo: false
+
+
+script:
+    - mkdir build && cd build
+    - cmake ..
+    - make -j
+    - ctest -V
+    - apps/volk_profile -v 31 -i 9
+
+# this matrix is more or less copypasta from travis-ci docs because it just works
+matrix:
+  include:
+    # works on Precise and Trusty
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-4.8
+            - cmake
+            - cmake-data
+            - libboost-all-dev
+            - python2.7
+            - python-mako
+      env:
+         - MATRIX_EVAL="CC=gcc-4.8 && CXX=g++-4.8"
+    # works on Precise and Trusty
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-4.9
+            - cmake
+            - cmake-data
+            - libboost-all-dev
+            - python2.7
+            - python-mako
+      env:
+         - MATRIX_EVAL="CC=gcc-4.9 && CXX=g++-4.9"
+
+    # works on Precise and Trusty
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-5
+            - cmake
+            - cmake-data
+            - libboost-all-dev
+            - python2.7
+            - python-mako
+      env:
+         - MATRIX_EVAL="CC=gcc-5 && CXX=g++-5"
+
+    # works on Precise and Trusty
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-6
+            - cmake
+            - cmake-data
+            - libboost-all-dev
+            - python2.7
+            - python-mako
+      env:
+        - MATRIX_EVAL="CC=gcc-6 && CXX=g++-6"
+    - os: linux
+      before_install:
+        - pip install --user codecov
+      after_success:
+        - bash <(curl -s https://codecov.io/bash)
+      addons:
+        apt:
+          sources:
+          packages:
+            - cmake
+            - cmake-data
+            - libboost-all-dev
+            - python2.7
+            - python-mako
+      env:
+        - MATRIX_EVAL="CC=\"clang -fprofile-instr-generate -fcoverage-mapping\" && CXX=\"clang -fprofile-instr-generate -fcoverage-mapping\""
+
+before_install:
+    - eval "${MATRIX_EVAL}"

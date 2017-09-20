@@ -201,7 +201,7 @@ if(CPU_IS_x86)
         file(REMOVE ${CMAKE_CURRENT_BINARY_DIR}/test_cvtpi32_ps
           ${CMAKE_CURRENT_BINARY_DIR}/test_cvtpi32_ps.c)
     else(CMAKE_SIZEOF_VOID_P EQUAL 4)
-	    # 64-bit compilations won't need this command so don't overrule AVX 
+	    # 64-bit compilations won't need this command so don't overrule AVX
 	    set(HAVE_AVX_CVTPI32_PS 0)
     endif(CMAKE_SIZEOF_VOID_P EQUAL 4)
 
@@ -545,6 +545,7 @@ if(CMAKE_VERSION VERSION_GREATER "2.8.11")
     set_target_properties(volk_obj PROPERTIES COMPILE_FLAGS "-fPIC")
     set_target_properties(volk PROPERTIES SOVERSION ${LIBVER})
     set_target_properties(volk PROPERTIES DEFINE_SYMBOL "volk_EXPORTS")
+    set_target_properties(volk PROPERTIES C_STANDARD 99)
 
     #Install locations
     install(TARGETS volk
@@ -584,6 +585,7 @@ else()
     )
     set_target_properties(volk PROPERTIES SOVERSION ${LIBVER})
     set_target_properties(volk PROPERTIES DEFINE_SYMBOL "volk_EXPORTS")
+    set_target_properties(volk PROPERTIES C_STANDARD 99)
 
     install(TARGETS volk
         LIBRARY DESTINATION lib${LIB_SUFFIX} COMPONENT "volk_runtime" # .so file
