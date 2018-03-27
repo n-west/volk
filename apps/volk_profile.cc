@@ -20,10 +20,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#include <boost/filesystem/operations.hpp>   // for create_directories, exists
-#include <boost/filesystem/path.hpp>         // for path, operator<<
-#include <boost/filesystem/path_traits.hpp>  // for filesystem
 #include <stddef.h>                          // for size_t
+#include <experimental/filesystem>
 #include <sys/stat.h>                        // for stat
 #include <volk/volk_prefs.h>                 // for volk_get_config_path
 #include <iostream>                          // for operator<<, basic_ostream
@@ -39,7 +37,7 @@
 #include "volk_profile.h"
 
 
-namespace fs = boost::filesystem;
+namespace fs = std::experimental::filesystem;
 
 volk_test_params_t test_params(1e-6f, 327.f, 131071, 1987, false, "");
 
@@ -227,10 +225,10 @@ void write_results(const std::vector<volk_test_results_t> *results, bool update_
      * These
      */
     const fs::path config_path(path);
-    if (! fs::exists(config_path.branch_path()))
+    if (! fs::exists(config_path.root_path()))
     {
-        std::cout << "Creating " << config_path.branch_path() << "..." << std::endl;
-        fs::create_directories(config_path.branch_path());
+        std::cout << "Creating " << config_path.root_path() << "..." << std::endl;
+        fs::create_directories(config_path.root_path());
     }
 
     std::ofstream config;

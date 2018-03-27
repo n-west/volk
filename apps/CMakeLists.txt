@@ -29,7 +29,6 @@ include_directories(
     ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/lib
     ${PROJECT_BINARY_DIR}/lib
-    ${Boost_INCLUDE_DIRS}
 )
 
 # MAKE volk_profile
@@ -41,10 +40,10 @@ add_executable(volk_profile
 
 
 if(ENABLE_STATIC_LIBS)
-    target_link_libraries(volk_profile volk_static ${Boost_LIBRARIES})
+    target_link_libraries(volk_profile volk_static)
     set_target_properties(volk_profile PROPERTIES LINK_FLAGS "-static")
 else()
-    target_link_libraries(volk_profile volk ${Boost_LIBRARIES})
+    target_link_libraries(volk_profile volk stdc++fs)
 endif()
 
 install(

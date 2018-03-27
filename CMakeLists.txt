@@ -25,9 +25,10 @@ enable_language(CXX)
 enable_language(C)
 enable_testing()
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -Wall")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
 add_definitions(-D_GLIBCXX_USE_CXX11_ABI=1)
+message("CMAKE CXX FLAGS: ${CMAKE_CXX_FLAGS}")
 
 set(CMAKE_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}) #allows this to be a sub-project
 set(CMAKE_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}) #allows this to be a sub-project
@@ -51,9 +52,6 @@ include(VolkVersion) #setup version info
 ########################################################################
 # Environment setup
 ########################################################################
-IF(NOT DEFINED BOOST_ROOT AND NOT DEFINED ENV{BOOST_ROOT})
-    SET(BOOST_ROOT ${CMAKE_INSTALL_PREFIX})
-ENDIF()
 
 IF(NOT DEFINED CROSSCOMPILE_MULTILIB)
     SET(CROSSCOMPILE_MULTILIB "")
@@ -91,25 +89,6 @@ endif()
 # Six
 if(NOT SIX_FOUND)
     message(FATAL_ERROR "six - python 2 and 3 compatibility library required to build VOLK")
-endif()
-
-# Boost
-if(MSVC)
-    if (NOT DEFINED BOOST_ALL_DYN_LINK)
-        set(BOOST_ALL_DYN_LINK TRUE)
-    endif()
-    set(BOOST_ALL_DYN_LINK "${BOOST_ALL_DYN_LINK}" CACHE BOOL "boost enable dynamic linking")
-    if(BOOST_ALL_DYN_LINK)
-        add_definitions(-DBOOST_ALL_DYN_LINK) #setup boost auto-linking in msvc
-    else(BOOST_ALL_DYN_LINK)
-        unset(BOOST_REQUIRED_COMPONENTS) #empty components list for static link
-    endif(BOOST_ALL_DYN_LINK)
-endif(MSVC)
-
-include(VolkBoost)
-
-if(NOT Boost_FOUND)
-    message(FATAL_ERROR "VOLK Requires boost to build")
 endif()
 
 # Orc
